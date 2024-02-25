@@ -1,0 +1,29 @@
+<!-- signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div class="container">
+        <div class="signup-box">
+            <h2>Sign Up</h2>
+            <form action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password1" placeholder="Password" required>
+                <input type="password" name="password2" placeholder="Confirm Password" required>
+                <label for="role">Select Role:</label>
+                <input type="radio" id="test_giver" name="role" value="test_giver" required>
+                <label for="test_giver">Test Giver</label>
+                <input type="radio" id="test_taker" name="role" value="test_taker" required>
+                <label for="test_taker">Test Taker</label>
+                
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
