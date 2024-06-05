@@ -61,12 +61,12 @@ def forward_query_to_admin(request):
         query = data.get('query')
         print(query)
         if query:
-            # Send email to admin
+            
             send_mail(
                 'New query from chatbot user',
                 query,
-                from_email,  # Replace with your email address
-                ['dhruvjindal258@gmail.com'],  # Admin's email address
+                from_email, 
+                ['dhruvjindal258@gmail.com'],  
                 fail_silently=False,
             )
             return JsonResponse({'success': True})
@@ -169,7 +169,7 @@ def run_face_recognition(request):
 
 
 from django.core.management import call_command
-# Function to stop face recognition
+
 import os
 import time
 
@@ -194,10 +194,10 @@ def stop_threads():
 def stop_face_recognition(request):
     global head_pose_thread, audio_thread, detection_thread
     
-    # Set stop event
+   
     stop_event.set()
     
-    # Join the threads
+   
     
 
     stop_threads()
@@ -216,15 +216,15 @@ def create_test(request):
             test.save()
             form.save_m2m()
             
-            # Get the list of candidates
+            
             candidates = test.candidates.all()
             
-            # Prepare the email content
+           
             subject = 'New Test Assigned'
             message = f'You have been assigned a new test: {test.name}. Please log in to take the test.'
             from_email = settings.EMAIL_HOST_USER
             
-            # Send an email to each candidate
+            
             for candidate in candidates:
                 recipient_email = candidate.user.email
                 send_mail(subject, message, from_email, [recipient_email])
@@ -259,7 +259,7 @@ def start_test(request, test_id):
     test = get_object_or_404(Test, id=test_id)
     candidate_profile = request.user.profile
 
-    # Check if the candidate has already taken the test
+   
     candidate_test_status, created = CandidateTestStatus.objects.get_or_create(candidate=candidate_profile, test=test)
     if candidate_test_status.has_taken:
         return render(request, 'test_already_completed.html')
@@ -276,7 +276,6 @@ def start_test(request, test_id):
                     is_correct=(answer_text.strip() == question.correct_answer.strip())
                 )
         
-        # Mark the test as taken
         candidate_test_status.has_taken = True
         candidate_test_status.save()
 
@@ -286,7 +285,7 @@ def start_test(request, test_id):
 
     else:
             stop_threads()
-            # Start the threads
+           
             start_threads()
             end_time = datetime.now() + timedelta(minutes=test.duration)
             duration_seconds = test.duration * 60
@@ -318,7 +317,7 @@ def test_result(request, test_id):
 
     score_percentage = (scored_marks / total_marks) * 100 if total_marks > 0 else 0
 
-    # Read cheating status from final_results.csv
+   
 
     cheated =read_final_result(test_id)
        
@@ -326,7 +325,7 @@ def test_result(request, test_id):
      
 
    
-    # Determine pass/fail status
+    
     status = 'Fail' if cheated or score_percentage < 70 else 'Pass'
 
     test_result, created = TestResult.objects.get_or_create(
@@ -341,7 +340,7 @@ def test_result(request, test_id):
         test_result.status = status
         test_result.save()
 
-    # Save session data CSV file in the database
+    
     session_data_path = 'session_1_data.csv'
     if os.path.exists(session_data_path):
         with open(session_data_path, 'rb') as file:
@@ -383,7 +382,7 @@ import cv2
 import mediapipe as mp
 import keyboard
 
-# Constants and Globals
+
 PLOT_LENGTH = 200
 GLOBAL_CHEAT = 0
 PERCENTAGE_CHEAT = 0
@@ -407,7 +406,7 @@ X_AXIS_CHEAT = 0
 Y_AXIS_CHEAT = 0
 
 
-# Function to calculate average
+
 def avg(current, previous):
     if previous > 1:
         return 0.65
@@ -419,7 +418,7 @@ def avg(current, previous):
         return current
     return 1 * previous + 0.1 * current
 
-# Sound detection and analysis functions
+
 def print_sound(indata, outdata, frames, time, status):
     global SOUND_AMPLITUDE, SUS_COUNT, count, AUDIO_CHEAT
     vnorm = int(np.linalg.norm(indata) * 10)
@@ -441,14 +440,14 @@ def print_sound(indata, outdata, frames, time, status):
 
 def sound():
     with sd.Stream(callback=print_sound):
-        while not stop_event.is_set():  # Check if the stop event is set
+        while not stop_event.is_set():  
             sd.sleep(100)
 
-# Head pose detection function
+
 import cv2
 import ctypes
 
-# Function to move the OpenCV window to a specified position
+
 def moveWindowTo(x, y):
     ctypes.windll.user32.SetWindowPos(
         ctypes.windll.user32.FindWindowW(None, "Head Pose Estimation"),
@@ -460,7 +459,7 @@ def moveWindowTo(x, y):
         0x0001
     )
 
-# Function to hide window title bar
+
 def hideTitleBar(window_name):
     hwnd = win32gui.FindWindow(None, window_name)
     style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
@@ -470,7 +469,7 @@ def hideTitleBar(window_name):
     win32gui.SetWindowPos(hwnd, None, 0, 0, 0, 0,
                           win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOZORDER | win32con.SWP_FRAMECHANGED)
 
-# Updated pose function
+
 def moveWindowTo(x, y):
     ctypes.windll.user32.SetWindowPos(
         ctypes.windll.user32.FindWindowW(None, "Head Pose Estimation"),
@@ -483,12 +482,12 @@ def moveWindowTo(x, y):
     )
 def set_fixed_size(window_name, width, height):
     hwnd = ctypes.windll.user32.FindWindowW(None, window_name)
-    style = ctypes.windll.user32.GetWindowLongW(hwnd, -16)  # -16 is GWL_STYLE
-    style &= ~0x00040000  # Remove WS_SIZEBOX
-    style &= ~0x00020000  # Remove WS_MAXIMIZEBOX
+    style = ctypes.windll.user32.GetWindowLongW(hwnd, -16)  
+    style &= ~0x00040000  
+    style &= ~0x00020000  
     ctypes.windll.user32.SetWindowLongW(hwnd, -16, style)
     ctypes.windll.user32.SetWindowPos(hwnd, None, 0, 0, width, height, 0x0002)
-# Updated pose function
+
 def pose():
     global x, y, X_AXIS_CHEAT, Y_AXIS_CHEAT
     mp_face_mesh = mp.solutions.face_mesh
@@ -500,7 +499,7 @@ def pose():
     window_name = "Head Pose Estimation"
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
-    # Position the window in the top right corner of the screen
+    
     screen_width = ctypes.windll.user32.GetSystemMetrics(0)
     screen_height = ctypes.windll.user32.GetSystemMetrics(1)
     window_width = 440
@@ -508,13 +507,13 @@ def pose():
     cv2.resizeWindow(window_name, window_width, window_height)
     moveWindowTo(screen_width - window_width - 10, 10)
 
-    # Make the window non-resizable and non-movable
+    
     cv2.setWindowProperty(window_name, cv2.WND_PROP_TOPMOST, 1)
     cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
     cv2.setWindowProperty(window_name, cv2.WND_PROP_ASPECT_RATIO, cv2.WINDOW_KEEPRATIO)
     set_fixed_size(window_name, window_width, window_height)
    
-    while cap.isOpened() and not stop_event.is_set():  # Check if the stop event is set
+    while cap.isOpened() and not stop_event.is_set():  
         success, image = cap.read()
         if not success:
             break
@@ -589,7 +588,7 @@ def pose():
 
     cap.release()
     cv2.destroyAllWindows()
-# Detection process function
+
 def process():
     global GLOBAL_CHEAT, PERCENTAGE_CHEAT
     if GLOBAL_CHEAT == 0:
@@ -654,13 +653,13 @@ def save_final_result(session_number, cheated):
             with open(f'final_results_{test_idx}.csv', mode='w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Cheated' if cheated else 'Not'])
-                file.flush()  # Ensure data is written to disk
-        time.sleep(0.1)  # Short delay to ensure file system catches up
+                file.flush()  
+        time.sleep(0.1)  
         logging.info(f'Successfully wrote final results for test {test_idx}')
     except Exception as e:
         logging.error(f'Error writing final results for test {test_idx}: {e}')
 
-# Function to read the final result indicating cheating status
+
 def read_final_result(test_idx):
     cheated = False
     final_results_path = f'final_results_{test_idx}.csv'
@@ -676,7 +675,7 @@ def read_final_result(test_idx):
         except Exception as e:
             logging.error(f'Error reading final results for test {test_idx}: {e}')
     return cheated
-# Data saving functions
+
 def save_session_data(session_number, data, cheated):
     with open(f'session_{session_number}_data.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -685,7 +684,7 @@ def save_session_data(session_number, data, cheated):
             writer.writerow(entry)
 
 
-# Combined detection function
+
 def run_detection():
     global XDATA, YDATA
     #plt.ion()  # Turn on interactive mode
@@ -702,10 +701,10 @@ def run_detection():
     i = 0
     exceed_count = 0
     iterations_without_cheat = 0
-    cheating_occurred = False  # Flag to track if cheating occurred during the session
+    cheating_occurred = False  
 
-    while not stop_event.is_set():  # Check the stop event
-        if keyboard.is_pressed('q'):  # Press 'q' to quit the program
+    while not stop_event.is_set():  
+        if keyboard.is_pressed('q'):  
             break
 
         YDATA.pop(0)
@@ -728,7 +727,6 @@ def run_detection():
             break
         i += 1
 
-    # Write session data to session_data.csv
     save_session_data(session_number, session_data, cheating_occurred)
 
     if cheating_occurred:
