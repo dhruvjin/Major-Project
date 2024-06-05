@@ -1,14 +1,102 @@
-<!-- home_giver.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Giver</title>
-</head>
-<body>
-    <h2>Welcome, Test Giver!</h2>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home Giver | SmarTest{% endblock %}
+
+{% block content %}
+<style>
+    .home-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        text-align: center;
+    }
+    .home-container h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #2f3640;
+        animation: fadeInDown 1s ease;
+    }
+    .home-container p {
+        font-size: 1.25rem;
+        margin-bottom: 30px;
+        color: #2d3436;
+        animation: fadeInUp 1s ease;
+    }
+    .home-container a {
+        text-decoration: none;
+    }
+    .home-container button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 25px;
+        background-color: #0097e6;
+        color: #ffffff;
+        font-size: 1rem;
+        cursor: pointer;
+        margin: 10px;
+        transition: background-color 0.3s ease;
+    }
+    .home-container button:hover {
+        background-color: #007bb5;
+    }
+    .home-container img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 20px;
+        animation: fadeIn 2s ease;
+    }
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="home-container">
+    <h2>Welcome, {{ user_name|title }}!</h2>
+
+<img src="{% static 'test.png' %}" alt="Test Giver Image">
     <p>You can create a new test here.</p>
-    <a href="#">Create Test</a>
-</body>
-</html>
+    <a href="{% url 'create_test' %}">
+        <button>Create Test</button>
+    </a>
+    <a href="{% url 'view_test_results' %}">
+        <button>View Test Results</button>
+    </a>
+    
+    
+</div>
+
+<script>
+    // Check if the URL contains the anchor tag 'create'
+    if (window.location.hash === '#create') {
+        // Display a popup message
+        alert('Test created successfully!');
+    }
+</script>
+{% endblock %}

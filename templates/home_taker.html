@@ -1,14 +1,102 @@
-<!-- home_taker.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Taker</title>
-</head>
-<body>
-    <h2>Welcome, Test Taker!</h2>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home Taker | SmarTest{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        padding: 20px;
+        text-align: center;
+        animation: fadeInDown 1s ease;
+    }
+    .header-image {
+        max-width: 38% !important;
+        height: auto !important;
+        margin-bottom: 30px;
+        animation: fadeInUp 1s ease;
+    }
+    .test-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .test-item {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        margin: 10px;
+        padding: 20px;
+        width: 300px;
+        transition: transform 0.3s ease;
+        animation: fadeIn 1s ease;
+    }
+    .test-item:hover {
+        transform: scale(1.05);
+    }
+    .test-item a {
+        text-decoration: none;
+        color: #007bff;
+        transition: color 0.3s ease;
+    }
+    .test-item a:hover {
+        color: #0056b3;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="container">
+    <h1 style="font-size: 40px;">Welcome, {{ user_name|capfirst }}!</h1>
+
+    <img src="{% static 'elearning.png' %}" alt="Home Taker Header Image" class="header-image">
+    
+    
     <p>You can start a new test here.</p>
-    <a href="#">Start Test</a>
-</body>
-</html>
+    
+    <h3>Tests Assigned:</h3>
+    <ul class="test-list">
+        {% for test in new_tests_assigned %}
+            <li class="test-item">
+                <a href="{% url 'start_test' test.id %}">Start Test: {{ test.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Tests Taken:</h3>
+    <ul class="test-list">
+        {% for test in tests_taken %}
+            <li class="test-item">{{ test.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
